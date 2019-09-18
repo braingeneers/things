@@ -1,0 +1,5 @@
+requests
+awscli
+boto3
+ipython
+AWSIoTPythonSDK
