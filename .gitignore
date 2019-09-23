@@ -1,5 +1,8 @@
 .env
 certs
+.bash_history
+.config
+.npm
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

@@ -33,12 +33,12 @@ list-things:
 
 autossh:
 	# Port forward to local machine react dev server and ethereum test server
-	autossh -M 20000 -N plaza.gi.ucsc.edu -L 18500:localhost:18500
+	autossh -M 20000 -N plaza.gi.ucsc.edu -L 18500:localhost:3000
 
 debug-console:
 	# Start a local server with dynamic reloading
 	# npm start
-	docker run -it --rm \
+	docker run --rm -it --name $(USER)-node \
 		-v `pwd`:/app \
 		-p 127.0.0.1:18500:3000 \
 		-w /app \
