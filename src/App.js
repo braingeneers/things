@@ -1,5 +1,11 @@
 import React, {Component} from 'react'
-import './App.css';
+import { 
+  Container, 
+  Button, 
+  List, ListItem, ListItemIcon, ListItemText,
+} from '@material-ui/core'
+
+import CameraIcon from '@material-ui/icons/Camera';
 
 import AWS from 'aws-sdk';
 
@@ -56,17 +62,21 @@ class App extends Component {
     if (!this.state.loaded) return (<div>Loading...</div>)
 
     return (
-      <div>
-        <button onClick={() => Auth.signOut()}>Sign Out {this.state.user.getUsername()}</button>
-        <div>Hello World</div>
-        <ul>
+      <Container>
+        <Button onClick={() => Auth.signOut()}>Sign Out {this.state.user.getUsername()}</Button>
+        <List>
         {this.state.things.things.map(thing =>
-          <li key={thing.thingArn}>
-            {thing.thingName}
-          </li>
+          <ListItem key={thing.thingArn}>
+            <ListItemIcon>
+              <CameraIcon />
+            </ListItemIcon>
+            <ListItemText primary={thing.thingName} />
+            <Button>Start</Button>
+            <Button>Stop</Button>
+          </ListItem>
         )}
-        </ul>
-      </div>
+        </List>
+      </Container>
     )
   }
 }
