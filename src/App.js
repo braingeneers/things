@@ -31,10 +31,6 @@ let awsconfig = {
 }
 Amplify.configure(awsconfig)
 
-
-// AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-// });
-
 class App extends Component {
   state = {
     user: null,
@@ -56,11 +52,11 @@ class App extends Component {
     this.setState({ iot: iot })
     this.setState({ things: await this.state.iot.listThings().promise() })
 
-    console.log(credentials.identityId)
     iot.attachPrincipalPolicy({
       policyName: 'default',
       principal: credentials.identityId
-    }, (err, res) => { if (err) console.error(err); 
+    }, (err, res) => { 
+      if (err) console.error(err); 
     });
 
     Amplify.addPluggable(new AWSIoTProvider({
@@ -73,7 +69,6 @@ class App extends Component {
       error: error => console.error(error),
       close: () => console.log('Done'),
     });
-
 
     this.setState({ loaded: true })
   }
