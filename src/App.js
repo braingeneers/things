@@ -4,11 +4,9 @@ import {
   Button, 
   List, ListItem, ListItemIcon, ListItemText,
 } from '@material-ui/core'
-
 import CameraIcon from '@material-ui/icons/Camera';
 
 import AWS from 'aws-sdk';
-
 import { withAuthenticator } from 'aws-amplify-react'
 import Amplify, { Auth, PubSub } from 'aws-amplify'
 import { AWSIoTProvider } from '@aws-amplify/pubsub/lib/Providers';
@@ -37,6 +35,7 @@ class App extends Component {
     iot: null,
     things: null,
     loaded: false,
+    authenticated: false,
   }
 
   async componentDidMount() {
@@ -48,27 +47,33 @@ class App extends Component {
       secretAccessKey: credentials.secretAccessKey,
       sessionToken: credentials.sessionToken
     })
-    const iot = new AWS.Iot({credentials: credentials})
-    this.setState({ iot: iot })
-    this.setState({ things: await this.state.iot.listThings().promise() })
+    try {
+      const iot = new AWS.Iot({credentials: credentials})
+      this.setState({ iot: iot })
+      this.setState({ things: await this.state.iot.listThings().promise() })
 
-    iot.attachPrincipalPolicy({
-      policyName: 'default',
-      principal: credentials.identityId
-    }, (err, res) => { 
-      if (err) console.error(err); 
-    });
+      iot.attachPrincipalPolicy({
+        policyName: 'default',
+        principal: credentials.identityId
+      }, (err, res) => { 
+        if (err) console.error(err); 
+      });
 
-    Amplify.addPluggable(new AWSIoTProvider({
-      aws_pubsub_region: awsconfig.Auth.region,
-      aws_pubsub_endpoint: 'wss://ahp00abmtph4i-ats.iot.us-west-2.amazonaws.com/mqtt'
-    }));
+      Amplify.addPluggable(new AWSIoTProvider({
+        aws_pubsub_region: awsconfig.Auth.region,
+        aws_pubsub_endpoint: 'wss://ahp00abmtph4i-ats.iot.us-west-2.amazonaws.com/mqtt'
+      }));
 
-    PubSub.subscribe('picroscope/#').subscribe({
-      next: data => console.log('Message received', data),
-      error: error => console.error(error),
-      close: () => console.log('Done'),
-    });
+      PubSub.subscribe('picroscope/#').subscribe({
+        next: data => console.log('Message received', data),
+        error: error => console.error(error),
+        close: () => console.log('Done'),
+      });
+
+      this.setState({ authenticated: true })
+    } catch(error) {
+      console.log("Unable to authenticate", error)
+    }
 
     this.setState({ loaded: true })
   }
@@ -76,16 +81,23 @@ class App extends Component {
   async publish(thing, action, message) {
     console.log(`${thing}/${action}`, message)
     await PubSub.publish(`${thing}/${action}`, { msg: message })
-
   }
 
   render() {
     if (!this.state.loaded) return (<div>Loading...</div>)
 
+    if (!this.state.authenticated) return (
+      <Container>
+        <Button variant="outlined"
+          onClick={() => Auth.signOut()}>Sign Out</Button>
+        Not authorized
+      </Container>
+    )
+
     return (
       <Container>
         <Button variant="outlined"
-          onClick={() => Auth.signOut()}>Sign Out {this.state.user.getUsername()}</Button>
+          onClick={() => Auth.signOut()}>Sign Out</Button>
         <List>
         {this.state.things.things.map(thing =>
           <ListItem key={thing.thingArn}>
@@ -105,4 +117,4 @@ class App extends Component {
   }
 }
 
-export default withAuthenticator(App);
+export default withAuthenticator(App)
