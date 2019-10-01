@@ -47,3 +47,16 @@ debug-console:
 		--user=`id -u`:`id -g` \
 		--entrypoint /bin/bash \
 		node:latest
+
+build-console:
+	# Build a production minified version of the console web app
+	npm run build
+
+run-console:
+	# Run the build version locally
+	npx serve -s build -l tcp://0.0.0.0:3000
+
+deploy-console:
+	# Build and deploy the app via github pages
+	npm run build
+	npx gh-pages -d build

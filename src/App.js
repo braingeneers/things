@@ -20,9 +20,11 @@ let awsconfig = {
     mandatorySignIn: true,
     oauth: {
       domain: "braingeneers.auth.us-west-2.amazoncognito.com",
-      scope: ["email", "openid"],
-      redirectSignIn: "http://localhost:3000/",
-      redirectSignOut: "http://localhost:3000/",
+      scope: ["email", "openid", "profile"],
+      redirectSignIn: (window.location.hostname === "localhost") ? 
+        "http://localhost:3000/" : "https://www.braingeneers.org/things/",
+      redirectSignOut: (window.location.hostname === "localhost") ? 
+        "http://localhost:3000/" : "https://www.braingeneers.org/things/",
       responseType: "token"
     }
   }
@@ -78,9 +80,9 @@ class App extends Component {
     this.setState({ loaded: true })
   }
 
-  async publish(thing, action, message) {
-    console.log(`${thing}/${action}`, message)
-    await PubSub.publish(`${thing}/${action}`, { msg: message })
+  async publish(thing, action, params={}) {
+    console.log(`${thing}/${action}`, params)
+    await PubSub.publish(`${thing}/${action}`, params)
   }
 
   render() {
@@ -106,9 +108,9 @@ class App extends Component {
             </ListItemIcon>
             <ListItemText primary={thing.thingName} />
             <Button variant="outlined" color="primary" 
-              onClick={() => this.publish("picroscope", "start", "a message")}>Start</Button>
+              onClick={() => this.publish(thing.thingName, "start", {})}>Start</Button>
             <Button variant="outlined" color="secondary" 
-              onClick={() => this.publish("picroscope", "stop", "a message")}>Stop</Button>
+              onClick={() => this.publish(thing.thingName, "stop", {})}>Stop</Button>
           </ListItem>
         )}
         </List>

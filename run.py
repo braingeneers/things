@@ -21,34 +21,31 @@ def init():
 def callback(client, userdata, message):
     global __RECORDING__
     print(message.topic, message.payload)
-    if message.topic == "picroscope/start":
+    if message.topic.endswith("/start"):
         __RECORDING__ = True
-    elif message.topic == "picroscope/stop":
+    elif message.topic.endswith("/stop"):
         __RECORDING__ = False
 
 
-def start(client):
+def start(client, name):
     client.connect()
-    client.subscribe("picroscope/#", 1, callback)
-    print("Connected and listening for events...")
+    client.subscribe("{}/#".format(name), 1, callback)
+    print("Thing {} and listening for events...".format(name))
 
 
 def stop(client):
-    client.unsubscribe("picroscope/#")
     client.disconnect()
     print("Stopped listening to events and disconnected.")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Magic genomic processing black box")
-    parser.add_argument("file", nargs="?", help="File to process")
-    parser.add_argument("-c", "--count", default=100, required=False,
-                        help="Count")
+        description="Demo braingeneers processing daemon")
+    parser.add_argument("-n", "--name", required=True, help="Thing name")
     args = parser.parse_args()
 
     client = init()
-    start(client)
+    start(client, args.name)
 
     while True:
         try:

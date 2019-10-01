@@ -1,4 +1,6 @@
 requests
+Pillow
+numpy
 awscli
 boto3
 ipython
