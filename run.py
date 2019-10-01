@@ -1,16 +1,18 @@
 import time
+import datetime
+import glob
 import argparse
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 __RECORDING__ = False
 
 
-def init():
-    client = AWSIoTMQTTClient("arn:aws:iot:us-west-2:443872533066:thing/buzz")
+def init(name):
+    client = AWSIoTMQTTClient("arn:aws:iot:us-west-2:443872533066:thing/{}".format(name))
     client.configureEndpoint("ahp00abmtph4i-ats.iot.us-west-2.amazonaws.com", 8883)
     client.configureCredentials("certs/AmazonRootCA1.pem",
-                                "certs/5541896cb2-private.pem.key",
-                                "certs/5541896cb2-certificate.pem.crt")
+                                glob.glob("certs/{}/*-private.pem.key".format(name))[0],
+                                glob.glob("certs/{}/*-certificate.pem.crt".format(name))[0])
     client.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
     client.configureDrainingFrequency(2)  # Draining: 2 Hz
     client.configureConnectDisconnectTimeout(10)  # 10 sec
@@ -44,14 +46,15 @@ if __name__ == '__main__':
     parser.add_argument("-n", "--name", required=True, help="Thing name")
     args = parser.parse_args()
 
-    client = init()
+    client = init(args.name)
     start(client, args.name)
 
     while True:
         try:
             time.sleep(5)
             if __RECORDING__:
-                print("Snap!")
+                time_stamp = datetime.datetime.now().isoformat()
+                print("Snap @ {}".format(time_stamp))
         except KeyboardInterrupt:
             break
 
