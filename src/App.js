@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
+
 import { 
   Container, 
-  Button, 
+  Button,
+  AppBar, Toolbar,
   List, ListItem, ListItemIcon, ListItemText,
 } from '@material-ui/core'
 import CameraIcon from '@material-ui/icons/Camera';
@@ -89,17 +91,24 @@ class App extends Component {
     if (!this.state.loaded) return (<div>Loading...</div>)
 
     if (!this.state.authenticated) return (
-      <Container>
-        <Button variant="outlined"
-          onClick={() => Auth.signOut()}>Sign Out</Button>
-        Not authorized
-      </Container>
-    )
+      <div>
+        <AppBar position="static">
+            <Button color="inherit" onClick={() => Auth.signOut()}>Logout</Button>
+        </AppBar>
+        <Container>
+          You're email address has not been authorized
+        </Container>
+			</div>
+		)
 
     return (
-      <Container>
-        <Button variant="outlined"
-          onClick={() => Auth.signOut()}>Sign Out</Button>
+      <div>
+        <AppBar position="static">
+          <Toolbar>
+            <img src="logo36.png" alt="Braingeneers"/>
+            <Button color="inherit" onClick={() => Auth.signOut()}>Logout</Button>
+          </Toolbar>
+        </AppBar>
         <List>
         {this.state.things.things.map(thing =>
           <ListItem key={thing.thingArn}>
@@ -114,7 +123,7 @@ class App extends Component {
           </ListItem>
         )}
         </List>
-      </Container>
+      </div>
     )
   }
 }
