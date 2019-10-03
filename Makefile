@@ -10,6 +10,7 @@ debug-thing:
 	# Run our image with the local version of the app and shell into it
 	docker run -it --rm \
 		-v `pwd`:/app \
+		-v `pwd`/certs/prp-s3-credentials:/.aws/credentials \
 		--user=`id -u`:`id -g` \
 		--entrypoint /bin/sh \
 		$(USER)-braingeneers-thing

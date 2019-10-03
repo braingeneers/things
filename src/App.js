@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import { 
   Container, 
   Button,
+  TextField,
   AppBar, Toolbar,
   List, ListItem, ListItemIcon, ListItemText,
 } from '@material-ui/core'
@@ -34,10 +35,12 @@ let awsconfig = {
 Amplify.configure(awsconfig)
 
 class App extends Component {
+
   state = {
     user: null,
     iot: null,
     things: null,
+    uuid: new Date().toISOString().split('T')[0],
     loaded: false,
     authenticated: false,
   }
@@ -102,13 +105,21 @@ class App extends Component {
 		)
 
     return (
-      <div>
+      <form>
         <AppBar position="static">
           <Toolbar>
             <img src="logo36.png" alt="Braingeneers"/>
             <Button color="inherit" onClick={() => Auth.signOut()}>Logout</Button>
           </Toolbar>
         </AppBar>
+        <TextField
+          id="uuid"
+          label="UUID"
+          value={this.state.uuid}
+          onChange={(e) => this.setState({ uuid: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
         <List>
         {this.state.things.things.map(thing =>
           <ListItem key={thing.thingArn}>
@@ -117,13 +128,13 @@ class App extends Component {
             </ListItemIcon>
             <ListItemText primary={thing.thingName} />
             <Button variant="outlined" color="primary" 
-              onClick={() => this.publish(thing.thingName, "start", {})}>Start</Button>
+              onClick={() => this.publish(thing.thingName, "start", {"uuid": this.state.uuid})}>Start</Button>
             <Button variant="outlined" color="secondary" 
               onClick={() => this.publish(thing.thingName, "stop", {})}>Stop</Button>
           </ListItem>
         )}
         </List>
-      </div>
+      </form>
     )
   }
 }

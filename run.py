@@ -2,9 +2,11 @@ import time
 import datetime
 import glob
 import argparse
+import json
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 __RECORDING__ = False
+__UUID__ = ""
 
 
 def init(name):
@@ -22,22 +24,13 @@ def init(name):
 
 def callback(client, userdata, message):
     global __RECORDING__
+    global __UUID__
     print(message.topic, message.payload)
     if message.topic.endswith("/start"):
         __RECORDING__ = True
+        __UUID__ = json.loads(message.payload.decode())["uuid"]
     elif message.topic.endswith("/stop"):
         __RECORDING__ = False
-
-
-def start(client, name):
-    client.connect()
-    client.subscribe("{}/#".format(name), 1, callback)
-    print("Thing {} and listening for events...".format(name))
-
-
-def stop(client):
-    client.disconnect()
-    print("Stopped listening to events and disconnected.")
 
 
 if __name__ == '__main__':
@@ -47,15 +40,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     client = init(args.name)
-    start(client, args.name)
+    client.connect()
+    client.subscribe("{}/#".format(args.name), 1, callback)
+    print("Thing {} and listening for events...".format(args.name))
 
     while True:
         try:
             time.sleep(5)
             if __RECORDING__:
                 time_stamp = datetime.datetime.now().isoformat()
-                print("Snap @ {}".format(time_stamp))
+                print("Snap @ {} to {} UUID".format(time_stamp, __UUID__))
         except KeyboardInterrupt:
             break
 
-    stop(client)
+    client.disconnect()
+    print("Stopped listening to events and disconnected.")
