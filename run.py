@@ -100,7 +100,7 @@ if __name__ == '__main__':
                         key = "{}/{}/images/{}/{}/{}.jpg".format(
                             __BASE__, __UUID__, timestamp, stack, z)
                         generate_and_upload_image(text, bucket, key)
-                        print(text, key)
+                        print("Uploaded", text, key)
 
                 # Add this capture to manifest and update
                 manifest["captures"].append(timestamp)
