@@ -12,7 +12,7 @@ debug-thing:
 		-v `pwd`:/app \
 		-v `pwd`/certs/prp-s3-credentials:/.aws/credentials \
 		--user=`id -u`:`id -g` \
-		--entrypoint /bin/sh \
+		--entrypoint /bin/bash \
 		$(USER)-braingeneers-thing
 
 run-thing:
