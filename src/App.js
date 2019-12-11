@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
-import { 
-  Container, 
+import {
+  Container,
   Button,
   TextField,
   AppBar, Toolbar,
@@ -24,9 +24,9 @@ let awsconfig = {
     oauth: {
       domain: "braingeneers.auth.us-west-2.amazoncognito.com",
       scope: ["email", "openid", "profile"],
-      redirectSignIn: (window.location.hostname === "localhost") ? 
+      redirectSignIn: (window.location.hostname === "localhost") ?
         "http://localhost:3000/" : "https://www.braingeneers.org/things/",
-      redirectSignOut: (window.location.hostname === "localhost") ? 
+      redirectSignOut: (window.location.hostname === "localhost") ?
         "http://localhost:3000/" : "https://www.braingeneers.org/things/",
       responseType: "token"
     }
@@ -41,6 +41,11 @@ class App extends Component {
     iot: null,
     things: null,
     uuid: new Date().toISOString().split('T')[0],
+    interval: 2,
+    stack_size: 5,
+    stack_offset: 500,
+    step_size: 100,
+    camera_params: null,
     loaded: false,
     authenticated: false,
   }
@@ -62,8 +67,8 @@ class App extends Component {
       iot.attachPrincipalPolicy({
         policyName: 'default',
         principal: credentials.identityId
-      }, (err, res) => { 
-        if (err) console.error(err); 
+      }, (err, res) => {
+        if (err) console.error(err);
       });
 
       Amplify.addPluggable(new AWSIoTProvider({
@@ -120,6 +125,38 @@ class App extends Component {
           margin="normal"
           variant="outlined"
         />
+        <TextField
+          id="stack_size"
+          label="Stack Size"
+          value={this.state.stack_size}
+          onChange={(e) => this.setState({ stack_size: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          id="step_size"
+          label="Step Size"
+          value={this.state.step_size}
+          onChange={(e) => this.setState({ step_size: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          id="stack_offset"
+          label="Step Offset"
+          value={this.state.stack_offset}
+          onChange={(e) => this.setState({ stack_offset: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          id="interval"
+          label="Interval (hours)"
+          value={this.state.interval}
+          onChange={(e) => this.setState({ interval: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
         <List>
         {this.state.things.things.map(thing =>
           <ListItem key={thing.thingArn}>
@@ -127,9 +164,9 @@ class App extends Component {
               <CameraIcon />
             </ListItemIcon>
             <ListItemText primary={thing.thingName} />
-            <Button variant="outlined" color="primary" 
-              onClick={() => this.publish(thing.thingName, "start", {"uuid": this.state.uuid})}>Start</Button>
-            <Button variant="outlined" color="secondary" 
+            <Button variant="outlined" color="primary"
+              onClick={() => this.publish(thing.thingName, "start", {"uuid": this.state.uuid, "params": {"interval":this.state.interval,"stack_size":this.state.stack_size, "stack_offset":this.state.stack_offset, "step_size":this.state.step_size,"camera_params":this.state.camera_params}} )}>Start</Button>
+            <Button variant="outlined" color="secondary"
               onClick={() => this.publish(thing.thingName, "stop", {})}>Stop</Button>
           </ListItem>
         )}
