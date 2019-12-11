@@ -45,7 +45,7 @@ class App extends Component {
     stack_size: 5,
     stack_offset: 500,
     step_size: 100,
-    camera_params: null,
+    camera_params: "-awboff -awbg 1,1 -o",
     loaded: false,
     authenticated: false,
   }
@@ -154,6 +154,14 @@ class App extends Component {
           label="Interval (hours)"
           value={this.state.interval}
           onChange={(e) => this.setState({ interval: e.target.value})}
+          margin="normal"
+          variant="outlined"
+        />
+        <TextField
+          id="camera_params"
+          label="Camera Command Parameters"
+          value={this.state.camera_params}
+          onChange={(e) => this.setState({ camera_params: e.target.value})}
           margin="normal"
           variant="outlined"
         />
