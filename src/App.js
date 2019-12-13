@@ -45,7 +45,7 @@ class App extends Component {
     stack_size: 5,
     stack_offset: 500,
     step_size: 100,
-    camera_params: "-awboff -awbg 1,1 -o",
+    camera_params: "-awb off -awbg 1,1 -o",
     loaded: false,
     authenticated: false,
   }
