@@ -4,6 +4,7 @@ import {
   Container,
   Button,
   TextField,
+  MenuItem,
   AppBar, Toolbar,
   List, ListItem, ListItemIcon, ListItemText,
 } from '@material-ui/core'
@@ -34,6 +35,26 @@ let awsconfig = {
 }
 Amplify.configure(awsconfig)
 
+const light_options = [
+  {
+    value: 'gfp',
+    label: 'GFP',
+  },
+  {
+    value: 'white',
+    label: 'Bright Field',
+  }
+]
+const camera_options = [
+  {
+    value: '-t 4000 -ss 2500000 -awb off -awbg 1,1 -o',
+    label: 'GFP',
+  },
+  {
+    value: '-t 4000 -awb off -awbg 1,1 -o',
+    label: 'Bright Field',
+  }
+]
 class App extends Component {
 
   state = {
@@ -45,7 +66,8 @@ class App extends Component {
     stack_size: 5,
     stack_offset: 500,
     step_size: 100,
-    camera_params: "-awb off -awbg 1,1 -o",
+    camera_params: "-t 4000 -awb off -awbg 1,1 -o",
+    light_mode: "white",
     loaded: false,
     authenticated: false,
   }
@@ -165,6 +187,38 @@ class App extends Component {
           margin="normal"
           variant="outlined"
         />
+        <TextField
+         id="outlined-select-cam-params"
+         select
+         label="Camera Parameter Presets"
+         value={this.state.camera_params}
+         onChange={(e) => this.setState({ camera_params: e.target.value})}
+         margin="normal"
+         style = {{width: 190}}
+         variant="outlined"
+       >
+         {camera_options.map(option => (
+           <MenuItem key={option.value} value={option.value}>
+             {option.label}
+           </MenuItem>
+         ))}
+       </TextField>
+        <TextField
+         id="outlined-select-currency"
+         select
+         label="Light Type"
+         value={this.state.light_mode}
+         onChange={(e) => this.setState({ light_mode: e.target.value})}
+         margin="normal"
+         style = {{width: 190}}
+         variant="outlined"
+       >
+         {light_options.map(option => (
+           <MenuItem key={option.value} value={option.value}>
+             {option.label}
+           </MenuItem>
+         ))}
+       </TextField>
         <List>
         {this.state.things.things.map(thing =>
           <ListItem key={thing.thingArn}>
@@ -173,13 +227,14 @@ class App extends Component {
             </ListItemIcon>
             <ListItemText primary={thing.thingName} />
             <Button variant="outlined" color="primary"
-              onClick={() => this.publish(thing.thingName, "start", {"uuid": this.state.uuid, "params": {"interval":this.state.interval,"stack_size":this.state.stack_size, "stack_offset":this.state.stack_offset, "step_size":this.state.step_size,"camera_params":this.state.camera_params}} )}>Start</Button>
+              onClick={() => this.publish(thing.thingName, "start", {"uuid": this.state.uuid, "params": {"interval":this.state.interval,"stack_size":this.state.stack_size, "stack_offset":this.state.stack_offset, "step_size":this.state.step_size,"camera_params":this.state.camera_params, "light_mode":this.state.light_mode}} )}>Start</Button>
             <Button variant="outlined" color="secondary"
               onClick={() => this.publish(thing.thingName, "stop", {})}>Stop</Button>
           </ListItem>
         )}
         </List>
       </form>
+
     )
   }
 }
