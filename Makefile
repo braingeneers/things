@@ -28,6 +28,10 @@ push-thing:
 list-things:
 	aws --profile braingeneers-administrator iot list-things
 
+publish:
+	aws --profile braingeneers-administrator iot-data publish --topic all --qos 1 --payload '{"uuid": "2019-10-03"}'
+
+
 #
 # Console
 #

@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 __RECORDING__ = False
-__BASE__ = "rcurrie/archive"
+__BASE__ = "archive"
 __UUID__ = ""
 
 
