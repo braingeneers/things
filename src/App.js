@@ -26,9 +26,9 @@ let awsconfig = {
       domain: "braingeneers.auth.us-west-2.amazoncognito.com",
       scope: ["email", "openid", "profile"],
       redirectSignIn: (window.location.hostname === "localhost") ?
-        "http://localhost:3000/" : "https://www.braingeneers.org/things/",
+        "http://localhost:3000/" : "https://braingeneers.gi.ucsc.edu/things/",
       redirectSignOut: (window.location.hostname === "localhost") ?
-        "http://localhost:3000/" : "https://www.braingeneers.org/things/",
+        "http://localhost:3000/" : "https://braingeneers.gi.ucsc.edu/things/",
       responseType: "token"
     }
   }
