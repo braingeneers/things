@@ -59,7 +59,8 @@ build-console:
 
 run-console:
 	# Run the build version locally
-	npx serve -s build -l tcp://0.0.0.0:3000
+	# Old: npx serve -s build -l tcp://0.0.0.0:3000
+	npm run start
 
 deploy-console:
 	# Build and deploy the app via github pages
